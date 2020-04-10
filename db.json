@@ -1,4 +1,4 @@
-const questions = [
+[
 
     {
         question: 'What is 2 + 2',
@@ -28,8 +28,5 @@ const questions = [
             { text: 'By adding a negative number to zero', correct:true},
         ]
     },
-
-
-        
     
 ]
