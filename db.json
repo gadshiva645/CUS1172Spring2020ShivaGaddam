@@ -1,5 +1,3 @@
-[
-
     {
         question: 'What is 2 + 2',
         answers: [
@@ -28,5 +26,3 @@
             { text: 'By adding a negative number to zero', correct:true},
         ]
     },
-    
-]
