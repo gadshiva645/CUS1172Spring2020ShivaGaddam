@@ -54,9 +54,6 @@ body.wrong { /* Body changes to red when wrong */
     outline: none;
 }
 
-.btn:hoover {
-    border-color: black;
-}
 
 .btn.correct {
     --hue: var(--hue-correct);
@@ -70,4 +67,14 @@ body.wrong { /* Body changes to red when wrong */
 .start-btn, .next-btn {
     font-weight: bold;
     padding: 10px 20px;
+}
+
+.controls { /* make control btns more flexible and center them */
+    display:flex;
+    justify-content: center;
+    align-items:center;
+}
+
+.hide {
+    display: none;
 }
