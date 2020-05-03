@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <link rel="stylesheet" href="styles.css">
+    <script
+  src="https://code.jquery.com/jquery-3.5.0.js"
+  integrity="sha256-r/AaFHrszJtwpe+tHyNi/XCfMxYpbsRg2Uqn0x3s2zc="
+  crossorigin="anonymous"></script>
+    <script defer src="script.js"></script>
+</head>
+<body>
+      
+   
+    <div class="container"> <!-- Container for quiz -->
+        <div  id="test-container" >
+            <h2>QUIZS <hr/></h2>
+        </div>
+
+        <div id="question-container" class="hide">
+
+        <div id="question">Question</div> <!-- Question -->
+
+        <div id="answer-buttons" class="btn-grid"> <!-- btn div and btn for answers to the question -->
+            <button class="btn">Answer 1</button>
+            <button class="btn">Answer 2</button>
+            <button class="btn">Answer 3</button>
+            <button class="btn">Answer 4</button>
+        </div>
+    </div>
+    <h3 id="result"></h3>
+        <div class="controls"> <!-- div for controls start and next -->
+            <button id="start-btn" class="start-btn btn">Start</button>
+            <button id="next-btn" class="next-btn btn hide">Next</button>
+            <p id="current-question" class=""></p>
+        </div>
+
+    </div>
+</body>
+</html>
