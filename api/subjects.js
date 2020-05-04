@@ -20,6 +20,12 @@ const tests = [
         name:'Quiz 2',
         details:"It is related to Software"
 
+    },
+    {
+        id:3,
+        name:'Quiz 3',
+        details:"It is related to Programming"
+
     }
 ];
 

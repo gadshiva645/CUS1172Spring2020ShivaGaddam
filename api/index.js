@@ -1,7 +1,8 @@
 const express = require('express');
 const app = express();
 var Subjects = require('./subjects');
-var Questions = require('./questions');
+var Questions = require('./question');
+var Answers = require('./answer');
 
 
 var allowCrossDomain = function(req, res, next) {
@@ -18,6 +19,7 @@ var allowCrossDomain = function(req, res, next) {
 app.use(allowCrossDomain);  
 app.use('/Subjects', Subjects)
 app.use('/Questions', Questions)
+app.use('/Answers', Answers)
 
 
 
