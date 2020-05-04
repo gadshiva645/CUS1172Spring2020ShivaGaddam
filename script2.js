@@ -5,10 +5,12 @@ const questionContainerElement = document.getElementById('question-container')
 const questionElement = document.getElementById('question')
 const answerButtonElement = document.getElementById('answer-buttons')
 const testContainerElement = document.getElementById('test-container')
+const feedback = document.getElementById('feedback')
 const result = document.getElementById('result')
+var shuffleQuestions,totalquestions,test,nextQuestionId;
 
 
-//Fetching 
+//Fetching Tests
 
     $.get( "http://localhost:3000/Subjects", function(data) {
         startButton.classList.add('hide') //add hide to start-btn classlist so the btn will no longer be visible
@@ -21,46 +23,40 @@ const result = document.getElementById('result')
         var text = document.createTextNode(item.name); 
         button.appendChild(text);
         button.id = item.id;
-        button.onclick = function(){
-            $.get( "http://localhost:3000/Questions/Sub/"+item.id, function( data ) {
-                questions = data;
-                console.log(questions.length);
-              });
+        button.onclick = function() {
+            test = item.id;
+              fetchQuestion(0);
               testContainerElement.classList.add('hide');
-              startButton.classList.remove('hide')
+              //startButton.classList.remove('hide')
+              nextButton.classList.remove('hide');
+              correctAnswers = [];
+              questionContainerElement.classList.remove('hide')
+
         }
         testContainerElement.appendChild(button); 
         }
      });
         
-    
 
+ startButton.addEventListener('click', () => {
+     questionContainerElement.classList.add('hide');
+     result.classList.add('hide');
+     feedback.classList.add('hide');
+     startButton.classList.add('hide');
+     testContainerElement.classList.remove('hide');
+   })
+   
 
-
-
-
-let shuffleQuestions, currentQuestionsIndex
-
-startButton.addEventListener('click', startGame) //when startbtn is clicked run startGame function
 nextButton.addEventListener('click', () => {
-    currentQuestionsIndex++
-    setNextQuestion()
+     // make question container visible
+    fetchQuestion(nextQuestionId);
 })
 
-function startGame() {
-    correctAnswers = [];
-    result.classList.add('hide');
-    //functionality for the when the start btn is pressed
-    startButton.classList.add('hide') //add hide to start-btn classlist so the btn will no longer be visible
-    shuffleQuestions = questions.sort(() => Math.random() - .5) //shuffle the questions array so we get a random question object
-    currentQuestionsIndex = 0;
-    questionContainerElement.classList.remove('hide') // make question container visible
-    setNextQuestion()
-}
-
+//Next Question
 function setNextQuestion() { //functionality for the when the next btn is pressed
-    resetState()
-    showQuestion(shuffleQuestions[currentQuestionsIndex])
+    feedback.classList.add('hide');
+    resetState();
+    showQuestion(shuffleQuestions);
 }
 
 function showQuestion(question){ //functionality to show the question
@@ -69,9 +65,6 @@ function showQuestion(question){ //functionality to show the question
         const button = document.createElement('button')
         button.innerText = answer.text
         button.classList.add('btn') //give the dynamically created btn the class of btn to get the styling as the btn class
-        if (answer.correct) {
-            button.dataset.correct = answer.correct
-        }
         button.addEventListener('click', selectAnswer)
         answerButtonElement.appendChild(button)
     })
@@ -86,41 +79,36 @@ function resetState() {
 }
 
 function selectAnswer(element) { //functionality when you select the answer
-    const selectedButton = element.target 
-    const correct = selectedButton.dataset.correct
-   
-    if(correct){
-        correctAnswers.push(1);
-    }
-
-
-    // setStatusClass(document.body, correct)
-    Array.from(answerButtonElement.children).forEach(button => {
-        setStatusClass(button, button.dataset.correct)
-    })
+    const selectedButton = element.target;
     
-    if(shuffleQuestions.length  > currentQuestionsIndex + 1) { // if there are more questions left
-        console.log(currentQuestionsIndex)
+    fetchAnswer(shuffleQuestions.id,selectedButton)
+           nextButton.classList.remove('hide')
+
+    //Result
+     if(totalquestions > nextQuestionId ) { // if there are more questions left
         nextButton.classList.remove('hide')
     } else { // if they are no more questions left
-        console.log(currentQuestionsIndex)
-        console.log(correctAnswers.length+"/"+questions.length)
-        const percent = correctAnswers.length/questions.length*100;
-        if (percent > 50) {
-            var performance = "Average Performance";
-        }else if(percent > 80){
+        console.log(correctAnswers.length+"/"+totalquestions)
+        const percent = correctAnswers.length/totalquestions*100;
+        if(percent > 80){
             var performance = "Exellent Performance";
-        }else if(percent < 50){
+        }
+        else if (percent > 50) {
+            var performance = "Average Performance";
+        } else if(percent < 50){
             var performance = "Poor Performance";
         }
 
-
-        result.innerText='RESULT :    ' + performance +" ,   "+ correctAnswers.length+"  Out of  "+questions.length;
-        startButton.innerText = 'Restart Game'
-        startButton.classList.remove('hide')
-        result.classList.remove('hide')
+        result.innerText='RESULT :    ' + performance +" ,   "+ correctAnswers.length+"  Out of  "+totalquestions;
+        result.classList.remove('hide');
+        nextButton.classList.add('hide');
+        startButton.classList.remove('hide');
+        startButton.innerText="Restart";
+        
     }
 }
+
+
 function setStatusClass(element, correct) {
     clearStatusClass(element)
     if (correct) {
@@ -136,4 +124,27 @@ function clearStatusClass(element) {
 }
 
 
- 
+//Fetch Question One by one Related to Quiz
+function fetchQuestion(currentQuestionsIndex){
+    $.get( "http://localhost:3000/Questions/Sub/"+test+"/"+currentQuestionsIndex, function( data ) {
+        shuffleQuestions = data.question;
+        totalquestions = data.totalquestions;
+        nextQuestionId = data.meta;
+        setNextQuestion()
+
+    });
+    }
+
+    function fetchAnswer(questionId,givenAns){
+        $.get( "http://localhost:3000/Answers/"+questionId+"/"+givenAns.innerText, function( data ) {
+            feedback.classList.remove('hide');
+            feedback.innerText = data.correct + ", Correct Answer is " + data.feedback;
+            if(data.correct == "True"){
+                givenAns.style.background = "green";
+                correctAnswers.push(1);
+            }else if(data.correct == "False"){
+                givenAns.style.background = "red";
+
+            }    
+        });
+        }
